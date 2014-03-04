@@ -1,10 +1,11 @@
 require 'mongo_mapper' #dependencies on mongo_mapper
 module Mongo
   class Transaction
+    class Rollback < StandardError; end
     module Model
       class Transaction
         include MongoMapper::Document
-        set_collection_name "transaction"
+        set_collection_name "transactions"
         safe
 
         #key :before, Hash
@@ -17,7 +18,12 @@ module Mongo
 
         def add_object(object)
           @object_array ||= []
-          @object_array << object if !@object_array.include?(object)
+          if !@object_array.include?(object)
+            @object_array << object
+            return true
+          else
+            return false
+          end
         end
 
         #before_save :translate_objects
@@ -42,6 +48,7 @@ module Mongo
 
 
         def commit
+          return if @object_array.size <= 1 #we don't do transaction with object size <=1 because mongo already have 1 document atomic.
           translate_objects
 
           #self.state = "initial"
