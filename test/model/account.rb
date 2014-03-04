@@ -1,4 +1,5 @@
 class Account
+  class InsufficentFundException < StandardError;end
   include MongoMapper::Document
   safe
 
@@ -13,4 +14,16 @@ class Account
   #ensure_index(:win_count)
   #ensure_index(:step_count)
   #ensure_index(:guess_hits_count)
+
+  protected :balance=
+
+  def withdraw(amount)
+    if self.balance < amount
+      raise InsufficentFundException
+    end
+    self.balance -= amount
+  end
+  def deposit(amount)
+    self.balance += amount
+  end
 end
