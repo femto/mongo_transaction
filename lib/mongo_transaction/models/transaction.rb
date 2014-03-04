@@ -17,7 +17,7 @@ module Mongo
 
         def add_object(object)
           @object_array ||= []
-          @object_array << object
+          @object_array << object if !@object_array.include?(object)
         end
 
         #before_save :translate_objects

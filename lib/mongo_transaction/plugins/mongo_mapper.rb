@@ -11,14 +11,21 @@ module Mongo
           self.class.transaction(*args, &block)
         end
         module ClassMethods
-          def transaction
-            transaction = Mongo::Transaction.current_transaction
+          def transaction(options={})
+            me_transaction = !Mongo::Transaction.transaction_exist?
+            #if options[:required_new]
+            #  transaction = Mongo::Transaction.current_transaction
+            #  new_transaction = true
+            #else
+              transaction = Mongo::Transaction.current_transaction
+            #end
+
             begin
               yield transaction
             rescue Exception#rollback
-              transaction.rollback
+              transaction.rollback if me_transaction
             else #commit
-              transaction.commit
+              transaction.commit if me_transaction
             ensure
             end
           end

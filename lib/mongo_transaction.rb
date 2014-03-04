@@ -27,6 +27,10 @@ module Mongo
         @scope ||= Thread
       end
 
+      def transaction_exist?
+        !!scope.current[:__mongo_transaction__]
+      end
+
       def current_transaction
         scope.current[:__mongo_transaction__] ||= Mongo::Transaction::Model::Transaction.new
       end
