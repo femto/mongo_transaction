@@ -31,7 +31,7 @@ module Mongo
             else #commit
               transaction.commit if me_transaction
             ensure
-              Mongo::Transaction.current_transaction = nil
+              Mongo::Transaction.current_transaction = nil if me_transaction
             end
           end
         end
