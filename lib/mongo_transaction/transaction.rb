@@ -20,11 +20,6 @@ class Transaction
 
   timestamps!
 
-  def transform_to_pending
-    self.state = "pending"
-    self.save
-  end
-
   def add_objects_to_transaction
     self.objects.each do |object_class, type, id, before_image, after_image|
       if type == "changed"
@@ -41,6 +36,22 @@ class Transaction
     end
   end
 
+
+
+  def commit
+    translate_objects
+
+    #self.state = "initial"
+    #self.save
+
+    self.state = "pending"
+    self.save
+
+    resume_from_pending
+
+  end
+
+  protected
   def resume_from_pending
     add_objects_to_transaction
 
@@ -63,16 +74,6 @@ class Transaction
 
     self.state = "done"
     self.save
-  end
-
-  def commit
-    translate_objects
-    #self.state = "initial"
-    #self.save
-    transform_to_pending
-
-    resume_from_pending
-
   end
 
   private
