@@ -34,6 +34,10 @@ module Mongo
       def current_transaction
         scope.current[:__mongo_transaction__] ||= Mongo::Transaction::Model::Transaction.new
       end
+
+      def current_transaction=(current_transaction)
+        scope.current[:__mongo_transaction__] = current_transaction
+      end
     end
     #recover_partial_transaction #run at startup or at regular interval to ensure application is in consistent state
   end

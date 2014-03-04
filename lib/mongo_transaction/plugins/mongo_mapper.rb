@@ -23,10 +23,15 @@ module Mongo
             begin
               yield transaction
             rescue Exception#rollback
-              transaction.rollback if me_transaction
+              if me_transaction
+                transaction.rollback
+              else
+                raise #re raise the exception
+              end
             else #commit
               transaction.commit if me_transaction
             ensure
+              Mongo::Transaction.current_transaction = nil
             end
           end
         end
