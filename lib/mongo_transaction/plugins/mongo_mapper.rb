@@ -7,16 +7,20 @@ module Mongo
         #def save
         #
         #end
-
-        def transaction
-          transaction = Mongo::Transaction.current_transaction
-          begin
-            yield transaction
-          rescue Exception#rollback
-            transaction.rollback
-          else #commit
-            transaction.commit
-          ensure
+        def transaction(*args, &block)
+          self.class.transaction(*args, &block)
+        end
+        module ClassMethods
+          def transaction
+            transaction = Mongo::Transaction.current_transaction
+            begin
+              yield transaction
+            rescue Exception#rollback
+              transaction.rollback
+            else #commit
+              transaction.commit
+            ensure
+            end
           end
         end
 
