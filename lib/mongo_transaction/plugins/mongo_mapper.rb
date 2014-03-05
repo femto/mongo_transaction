@@ -8,17 +8,17 @@ module Mongo
         def destroy
           with_transaction_returning_status { super }
         end
-        def save
+        def save(*)
           rollback_active_record_state! do
             with_transaction_returning_status { super }
           end
         end
 
-        def save!
+        def save!(*)
           with_transaction_returning_status { super }
         end
 
-        def touch
+        def touch(*)
           with_transaction_returning_status { super }
         end
 

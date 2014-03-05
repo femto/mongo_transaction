@@ -48,7 +48,7 @@ module Mongo
 
 
         def commit
-          return if @object_array.size <= 1 #we don't do transaction with object size <=1 because mongo already have 1 document atomic.
+          #return if @object_array.size <= 1 #we don't do transaction with object size <=1 because mongo already have 1 document atomic.
           translate_objects
 
           #self.state = "initial"
@@ -104,8 +104,9 @@ module Mongo
 
         private
         def translate_objects
+          @object_array ||= []
           @object_array.each do |object|
-            if object.changed?
+            #if object.changed?
               before_image = {}
               after_image = {}
               object.attributes.each do |key, value|
@@ -114,7 +115,7 @@ module Mongo
               end
               self.objects << [object.class.to_s, "changed", object.id, before_image, after_image]
               #self.objects << {:before=>before_image,:after=>after_image}
-            end
+            #end
           end
         end
       end
