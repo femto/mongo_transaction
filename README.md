@@ -18,8 +18,31 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+it's based on http://docs.mongodb.org/manual/tutorial/perform-two-phase-commits/
+basiclly
+```
+@account1 = Account.create({name: "A", balance: 1000})
+@account2 = Account.create({name: "B", balance: 1000})
+```
+```
+@account1.transaction do
+      @account1.deposit(100)
+      @account2.withdraw(100)
+      @account1.save
+      @account2.save
+end
+```
 
+or
+```
+Account.transaction do
+      @account1.deposit(100)
+      @account2.withdraw(100)
+      @account1.save
+      @account2.save
+end
+```
+(see test/mongo_transaction_test.rb for an example).
 ## Contributing
 
 1. Fork it ( http://github.com/<my-github-username>/mongo_transaction/fork )
